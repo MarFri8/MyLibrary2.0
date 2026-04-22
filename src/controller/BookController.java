@@ -28,7 +28,7 @@ public class BookController {
                     }
                     break;
                 case 2:
-                    System.out.println("Enter serch term (title or author):");
+                    System.out.println("Enter search term (title, author or category):");
                     scanner.nextLine();
                     String searchTerm = scanner.nextLine();
                     ArrayList<BorrowerBookDTO> searchResults = bookService.searchBooks(searchTerm);
@@ -40,6 +40,7 @@ public class BookController {
                             System.out.println(b.toString());
                         }
                     }
+                    break;
                 case 0:
                     active = false;
                     break;

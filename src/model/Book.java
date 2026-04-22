@@ -13,14 +13,16 @@ public class Book {
     private String language;
     private int pageCount;
     private ArrayList<Author> authors;
+    private ArrayList<Category> categories;
 
-    public Book(String title, int yearPublished, int availableCopies, String summary, String language, int pageCount) {
+    public Book(String title, int yearPublished, int availableCopies, String summary, String language, int pageCount,ArrayList<Category> categories) {
         this.title = title;
         this.yearPublished = yearPublished;
         this.availableCopies = availableCopies;
         this.summary = summary;
         this.language = language;
         this.pageCount = pageCount;
+        this.categories = categories;
     }
 
     public Book(int id, String title, String isbn, int yearPublished, int availableCopies, int totalCopies, String summary, String language, int pageCount) {
@@ -33,6 +35,20 @@ public class Book {
         this.summary = summary;
         this.language = language;
         this.pageCount = pageCount;
+    }
+
+    public Book(int id, String title, String isbn, int yearPublished, int availableCopies, int totalCopies, String summary, String language, int pageCount, ArrayList<Author> authors, ArrayList<Category> categories) {
+        this.id = id;
+        this.title = title;
+        this.isbn = isbn;
+        this.yearPublished = yearPublished;
+        this.availableCopies = availableCopies;
+        this.totalCopies = totalCopies;
+        this.summary = summary;
+        this.language = language;
+        this.pageCount = pageCount;
+        this.authors = authors;
+        this.categories = categories;
     }
 
     public int getId() {
@@ -113,6 +129,14 @@ public class Book {
 
     public void setAuthors(ArrayList<Author> authors) {
         this.authors = authors;
+    }
+
+    public ArrayList<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<Category> categories) {
+        this.categories = categories;
     }
 
     @Override

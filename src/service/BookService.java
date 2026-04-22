@@ -5,6 +5,7 @@ import dto.LibrarianBookDTO;
 import model.Book;
 import repository.AuthorRepository;
 import repository.BookRepository;
+import repository.CategoryRepository;
 
 import java.util.ArrayList;
 
@@ -12,12 +13,14 @@ public class BookService {
 
     BookRepository bookRepository = new BookRepository();
     AuthorRepository authorRepository = new AuthorRepository();
+    CategoryRepository categoryRepository = new CategoryRepository();
 
     public ArrayList<BorrowerBookDTO> findAvailableBooks(){
         ArrayList<Book> books = bookRepository.findAvailableBooks();
         ArrayList<BorrowerBookDTO> dtos = new ArrayList<>();
         for(Book book : books){
             book.setAuthors(authorRepository.getAuthorsByBookId(book.getId()));
+            book.setCategories(categoryRepository.getCategoriesByBookId(book.getId()));
             dtos.add(BorrowerBookDTO.toDTO(book));
         }
         return dtos;
@@ -34,6 +37,7 @@ public class BookService {
 
         for(Book book : books){
             book.setAuthors(authorRepository.getAuthorsByBookId(book.getId()));
+            book.setCategories(categoryRepository.getCategoriesByBookId(book.getId()));
             dtos.add(BorrowerBookDTO.toDTO(book));
         }
         return dtos;

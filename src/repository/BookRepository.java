@@ -2,14 +2,11 @@ package repository;
 
 import model.Author;
 import model.Book;
+import model.Category;
 import util.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.sql.*;
+import java.util.*;
 
 public class BookRepository {
     public ArrayList<Book> findAvailableBooks(){
@@ -39,14 +36,16 @@ public class BookRepository {
     }
     public ArrayList<Book> searchBooks(String searchTerm) throws SQLException{
 
-        ArrayList<Book> books = new ArrayList<>();
+        Map<Integer, Book> bookMap = new LinkedHashMap<>();
 
         String sql = """
-                SELECT b.title, b.year_published, b.available_copies, a.first_name, a.last_name, bd.summary, bd.language, bd.page_count FROM books b
+                SELECT b.id AS b_id, b.title, b.year_published, b.available_copies, a.first_name, a.last_name, bd.summary, bd.language, bd.page_count, c.id AS category_id, c.name FROM books b
+                JOIN book_categories bc ON b.id=bc.book_id
+                JOIN categories c ON c.id=bc.category_id
                 JOIN book_descriptions bd ON b.id=bd.book_id
                 JOIN book_authors ba ON b.id=ba.book_id
                 JOIN authors a ON a.id=ba.author_id
-                WHERE title LIKE ? OR first_name LIKE ? OR last_name LIKE ?
+                WHERE title LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR name LIKE ?
                 """;
 
         try (Connection conn = DatabaseConnection.connect();
@@ -54,27 +53,35 @@ public class BookRepository {
 
             String wildcardSearch = "%" + searchTerm + "%";
 
-            for(int i = 1; i <= 3; i++){
+            for(int i = 1; i <= 4; i++){
                 pstmt.setString(i, wildcardSearch);
             }
 
             try(ResultSet rs = pstmt.executeQuery()) {
 
                 while (rs.next()) {
-                    String title = rs.getString("title");
-                    int yearPublished = rs.getInt("year_published");
-                    int availableCopies = rs.getInt("available_copies");
-                    String summary = rs.getString("summary");
-                    String language = rs.getString("language");
-                    int pageCount = rs.getInt("page_count");
+                    int bookId = rs.getInt("b_id");
+                    Book book = bookMap.get(bookId);
+                    if(book == null) {
+                        String title = rs.getString("title");
+                        int yearPublished = rs.getInt("year_published");
+                        int availableCopies = rs.getInt("available_copies");
+                        String summary = rs.getString("summary");
+                        String language = rs.getString("language");
+                        int pageCount = rs.getInt("page_count");
 
-                    Book book = new Book(title, yearPublished, availableCopies, summary, language, pageCount);
-                    books.add(book);
+
+                        book = new Book(title, yearPublished, availableCopies, summary, language, pageCount, new ArrayList<>());
+                        book.setId(bookId);
+
+                        bookMap.put(bookId, book);
+                    }
+                    book.getCategories().add(new Category(rs.getInt("category_id"), rs.getString("name"), ""));
                 }
             }
         } catch (SQLException e) {
             System.out.println("BookRepository searchBooks Fel: " + e.getMessage());
         }
-        return books;
+        return new ArrayList<>(bookMap.values());
     }
 }

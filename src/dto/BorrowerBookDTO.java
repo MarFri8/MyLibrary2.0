@@ -2,6 +2,7 @@ package dto;
 
 import model.Author;
 import model.Book;
+import model.Category;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,11 @@ public class BorrowerBookDTO {
             authorNames.add(a.getFirstName() + " " + a.getLastName());
         }
         borrowerBookDTO.setAuthorNames(authorNames);
+        ArrayList<String> categoryNames = new ArrayList<>();
+        for(Category c : book.getCategories()){
+            categoryNames.add(c.getName());
+        }
+        borrowerBookDTO.setCategoryNames(categoryNames);
         return borrowerBookDTO;
     }
 
@@ -90,11 +96,20 @@ public class BorrowerBookDTO {
         this.authorNames = authorNames;
     }
 
+    public ArrayList<String> getCategoryNames() {
+        return categoryNames;
+    }
+
+    public void setCategoryNames(ArrayList<String> categoryNames) {
+        this.categoryNames = categoryNames;
+    }
+
     @Override
     public String toString() {
         return "Title: " + title +
                 "\nAuthor(s): " + String.join(", ", authorNames)  +
                 "\nYear: " + yearPublished +
+                "\nCategory: " + categoryNames +
                 "\nLanguage: " + language +
                 "\nSummary: " + summary +
                 "\nAvailable Copies: " + availableCopies +
