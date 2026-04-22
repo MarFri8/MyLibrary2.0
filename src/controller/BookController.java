@@ -15,9 +15,9 @@ public class BookController {
         boolean active = true;
 
         while(active){
-            System.out.println("------Book menu--------");
-            System.out.println("1. Show all available books");
-            System.out.println("2. Search for book");
+            System.out.println("------Book Menu--------");
+            System.out.println("1. Show All Available Books");
+            System.out.println("2. Search for Book");
             System.out.println("0. Back");
             int select = scanner.nextInt();
             switch(select){
@@ -28,12 +28,12 @@ public class BookController {
                     }
                     break;
                 case 2:
-                    System.out.println("Enter search term (title, author or category):");
+                    System.out.println("Enter Search Term (Title, Author or Category):");
                     scanner.nextLine();
                     String searchTerm = scanner.nextLine();
                     ArrayList<BorrowerBookDTO> searchResults = bookService.searchBooks(searchTerm);
                     if(searchResults.isEmpty()){
-                        System.out.println("No books matching '" + searchTerm + "' found.");
+                        System.out.println("No Books Matching '" + searchTerm + "' Found.");
                     } else{
                         System.out.println("--- Search Results ---");
                         for(BorrowerBookDTO b : searchResults){

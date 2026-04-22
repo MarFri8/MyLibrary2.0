@@ -7,6 +7,7 @@ import model.Category;
 import java.util.ArrayList;
 
 public class BorrowerBookDTO {
+    public int bookId;
     public String title;
     public int yearPublished;
     public int availableCopies;
@@ -21,6 +22,7 @@ public class BorrowerBookDTO {
 
     public static BorrowerBookDTO toDTO(Book book){
         BorrowerBookDTO borrowerBookDTO = new BorrowerBookDTO();
+        borrowerBookDTO.setBookId(book.getId());
         borrowerBookDTO.setTitle(book.getTitle());
         borrowerBookDTO.setLanguage(book.getLanguage());
         borrowerBookDTO.setYearPublished(book.getYearPublished());
@@ -39,6 +41,10 @@ public class BorrowerBookDTO {
         borrowerBookDTO.setCategoryNames(categoryNames);
         return borrowerBookDTO;
     }
+
+    public int getBookId() { return bookId; }
+
+    public void setBookId(int bookId) { this.bookId = bookId; }
 
     public String getTitle() {
         return title;
