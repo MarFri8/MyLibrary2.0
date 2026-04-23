@@ -30,7 +30,7 @@ public class BookRepository {
                 books.add(book);
             }
         } catch (SQLException e) {
-            System.out.println("BookRepository findAvaiableBooks Fel: " + e.getMessage());
+            System.out.println("BookRepository findAvailableBooks Fel: " + e.getMessage());
         }
         return books;
     }
@@ -49,15 +49,15 @@ public class BookRepository {
                 """;
 
         try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             String wildcardSearch = "%" + searchTerm + "%";
 
             for(int i = 1; i <= 4; i++){
-                pstmt.setString(i, wildcardSearch);
+                stmt.setString(i, wildcardSearch);
             }
 
-            try(ResultSet rs = pstmt.executeQuery()) {
+            try(ResultSet rs = stmt.executeQuery()) {
 
                 while (rs.next()) {
                     int bookId = rs.getInt("b_id");

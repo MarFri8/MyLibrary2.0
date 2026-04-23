@@ -21,7 +21,8 @@ public class LoanController {
         while(active){
             System.out.println("------Loan Menu--------");
             System.out.println("1. Return Loan");
-            System.out.println("2. Loan a book");
+            System.out.println("2. Loan a Book");
+            System.out.println("3. Extend a Loan");
             System.out.println("0. Back");
             int choice = scanner.nextInt();
             switch(choice){
@@ -50,6 +51,13 @@ public class LoanController {
                     System.out.println("Enter Borrower (Member) ID:");
                     int borrowerId = scanner.nextInt();
                     loanService.startNewLoan(bookId, borrowerId);
+                    break;
+                }
+                case 3: {
+                    System.out.println("--- Extend a Loan ---");
+                    System.out.print("Enter the Loan ID You Wish to Extend: ");
+                    int loanId = scanner.nextInt();
+                    loanService.extendLoanDate(loanId);
                     break;
                 }
                 case 0:

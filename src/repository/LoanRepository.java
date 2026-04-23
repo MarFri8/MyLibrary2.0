@@ -1,12 +1,36 @@
 package repository;
 
-import model.Loan;
+import dto.ActiveLoanDTO;
 import util.DatabaseConnection;
 
 import java.sql.*;
 import java.util.*;
 
 public class LoanRepository {
+
+    public ArrayList<ActiveLoanDTO> getActiveLoans(){
+        ArrayList<ActiveLoanDTO> list = new ArrayList<>();
+        String sql = """
+                SELECT l.id AS l_id, b.id AS b_id, b.title, l.due_date FROM loans l
+                JOIN books b ON l.book_id=b.id
+                WHERE l.return_date IS NULL
+                """;
+        try(Connection conn = DatabaseConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery()){
+            while(rs.next()){
+                ActiveLoanDTO dto = new ActiveLoanDTO();
+                dto.setLoanId(rs.getInt("l_id"));
+                dto.setBookId(rs.getInt("b_id"));
+                dto.setTitle(rs.getString("title"));
+                dto.setDueDate(rs.getString("due_date"));
+                list.add(dto);
+            }
+        }catch(SQLException e){
+            System.out.println("LoanRepository getActiveLoans Fel: " + e.getMessage());
+        }
+        return list;
+    }
 
     public void createLoan(int bookId, int borrowerId){
 
@@ -37,7 +61,7 @@ public class LoanRepository {
                 throw e;
             }
         } catch(SQLException e){
-            System.out.println("Error creating loan: " + e.getMessage());
+            System.out.println("LoanRepository createLoan Fel: " + e.getMessage());
         }
     }
 
@@ -59,6 +83,25 @@ public class LoanRepository {
              System.out.println("Loans updated: " + loanRowsAffected + " Books updated: " + bookRowsAffected);
         } catch (SQLException e) {
             System.out.println("LoanRepository returnLoan Fel: " + e.getMessage());
+        }
+    }
+
+    public void extendLoan(int loanId){
+        String sql = "UPDATE loans SET due_date = DATE_ADD(due_date, INTERVAL 3 Day) WHERE id = ?";
+
+        try(Connection conn = DatabaseConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1, loanId);
+            int rowsAffected = stmt.executeUpdate();
+
+            if(rowsAffected > 0){
+                System.out.println("Loan (ID: " + loanId + ") Extended by 3 Days");
+            }else{
+                System.out.println("Loan (ID: " + loanId + ") Not Found");
+            }
+        } catch(SQLException e){
+            System.out.println("LoanRepositroy extendLoan Fel: " + e.getMessage());
         }
     }
 
