@@ -95,13 +95,48 @@ public class BookRepository {
                 psBook.setInt(1, bookId); psBook.executeUpdate();
 
                 conn.commit();
-                System.out.println("Book " + bookId + " and All Its Data Has Been Deleted.");
+                System.out.println("Book " + bookId + " and All Its Data Has Been Deleted");
             } catch (SQLException e) {
                 conn.rollback();
                 System.out.println("BookRepository deleteBook Fel: " + e.getMessage());
             }
         } catch (SQLException e) {
             System.out.println("BookRepository deleteBook DB Fel: " + e.getMessage());
+        }
+    }
+
+    public void updateBook(int bookId, String title, String isbn, int year, int copies, String summary, String lang, int pages) {
+        String updateBook = "UPDATE books SET title = ?, isbn = ?, year_published = ?, total_copies = ? WHERE id = ?";
+        String updateDesc = "INSERT INTO book_descriptions (book_id, summary, language, page_count) VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE summary = VALUES(summary), language = VALUES(language), page_count = VALUES(page_count)";
+
+        try (Connection conn = util.DatabaseConnection.connect()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psBook = conn.prepareStatement(updateBook);
+                 PreparedStatement psDesc = conn.prepareStatement(updateDesc)) {
+
+                psBook.setString(1, title);
+                psBook.setString(2, isbn);
+                psBook.setInt(3, year);
+                psBook.setInt(4, copies);
+                psBook.setInt(5, bookId);
+                psBook.executeUpdate();
+
+                psDesc.setInt(1, bookId);
+                psDesc.setString(2, summary);
+                psDesc.setString(3, lang);
+                psDesc.setInt(4, pages);
+                psDesc.executeUpdate();
+
+                conn.commit();
+                System.out.println("Book ID " + bookId + " Updated Successfully");
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("BookRepository updateBookDetails Fel: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("BookRepository updateBookDetails DB Fel: " + e.getMessage());
         }
     }
 

@@ -15,6 +15,10 @@ public class BookService {
     AuthorRepository authorRepository = new AuthorRepository();
     CategoryRepository categoryRepository = new CategoryRepository();
 
+    public void editBook(int id, String title, String isbn, int year, int copies, String summary, String lang, int pages) {
+        bookRepository.updateBook(id, title, isbn, year, copies, summary, lang, pages);
+    }
+
     public void removeBook(int bookId){
         bookRepository.deleteBook(bookId);
     }
