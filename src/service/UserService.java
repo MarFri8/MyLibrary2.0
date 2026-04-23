@@ -35,4 +35,9 @@ public class UserService {
         }
         return false;
     }
+
+    public void registerNewBorrower(String fName, String lName, String email, String password) {
+        Borrower newBorrower = new Borrower(0, fName, lName, email, password);
+        userRepository.createBorrower(newBorrower);
+    }
 }

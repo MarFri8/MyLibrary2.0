@@ -8,26 +8,44 @@ import java.util.*;
 
 public class LoanRepository {
 
-    public ArrayList<ActiveLoanDTO> getActiveLoans(){
-        ArrayList<ActiveLoanDTO> list = new ArrayList<>();
+    public ArrayList<ActiveLoanDTO> getAllActiveLoans() {
         String sql = """
-                SELECT l.id AS l_id, b.id AS b_id, b.title, l.due_date FROM loans l
+                SELECT l.id AS l_id, b.id AS b_id, b.title, l.due_date, m.id AS m_id FROM loans l
                 JOIN books b ON l.book_id=b.id
+                JOIN members m ON l.member_id=m.id
                 WHERE l.return_date IS NULL
                 """;
+        return executeActiveLoanQuery(sql, -1);
+    }
+    public ArrayList<ActiveLoanDTO> getMyActiveLoans(int borrowerId) {
+        String sql = """
+                SELECT l.id AS l_id, b.id AS b_id, b.title, l.due_date, m.id AS m_id FROM loans l
+                JOIN books b ON l.book_id=b.id
+                JOIN members m ON l.member_id=m.id
+                WHERE l.member_id = ? AND l.return_date IS NULL
+                """;
+        return executeActiveLoanQuery(sql, borrowerId);
+    }
+    private ArrayList<ActiveLoanDTO> executeActiveLoanQuery(String sql, int borrowerId){
+        ArrayList<ActiveLoanDTO> list = new ArrayList<>();
         try(Connection conn = DatabaseConnection.connect();
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery()){
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+            if(borrowerId != -1){
+                stmt.setInt(1, borrowerId);
+            }
+
+        ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 ActiveLoanDTO dto = new ActiveLoanDTO();
                 dto.setLoanId(rs.getInt("l_id"));
+                dto.setUserId(rs.getInt("m_id"));
                 dto.setBookId(rs.getInt("b_id"));
                 dto.setTitle(rs.getString("title"));
                 dto.setDueDate(rs.getString("due_date"));
                 list.add(dto);
             }
         }catch(SQLException e){
-            System.out.println("LoanRepository getActiveLoans Fel: " + e.getMessage());
+            System.out.println("LoanRepository executeActiveLoanQuery Fel: " + e.getMessage());
         }
         return list;
     }

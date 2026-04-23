@@ -29,7 +29,8 @@ public class BorrowerController {
             switch(select){
                 case 1:
                     System.out.println("--- Current Active Loans ---");
-                    ArrayList<ActiveLoanDTO> activeLoans = loanService.getAllActiveLoans();
+                    int myId = Main.loggedInUser.getId();
+                    ArrayList<ActiveLoanDTO> activeLoans = loanService.fetchMyActiveLoans(myId);
                     if(activeLoans.isEmpty()){
                         System.out.println("No Active Loans Found");
                     }else{

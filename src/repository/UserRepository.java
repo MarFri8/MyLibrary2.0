@@ -1,6 +1,7 @@
 package repository;
 
 import model.Borrower;
+import model.Librarian;
 import model.User;
 import util.DatabaseConnection;
 
@@ -16,8 +17,25 @@ public class UserRepository {
 
                  ResultSet rs = stmt.executeQuery();
 
-                 if(rs.next()){
-                     return new Borrower(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"), rs.getString("password"), rs.getString("membership_type"));
+                 if(rs.next()) {
+                     String type = rs.getString("membership_type");
+                     if ("admin".equalsIgnoreCase(type)) {
+                         return new Librarian(
+                                 rs.getInt("id"),
+                                 rs.getString("first_name"),
+                                 rs.getString("last_name"),
+                                 rs.getString("email"), rs.
+                                 getString("password")/*,
+                                 rs.getString("membership_type")*/);
+                     } else {
+                         return new Borrower(
+                                 rs.getInt("id"),
+                                 rs.getString("first_name"),
+                                 rs.getString("last_name"),
+                                 rs.getString("email"),
+                                 rs.getString("password")/*,
+                                 rs.getString("membership_type")*/);
+                     }
                  }
         } catch (SQLException e){
             System.out.println("UserRepository getUserByEmail Fel: " + e.getMessage());
@@ -33,7 +51,13 @@ public class UserRepository {
             ResultSet rs = stmt.executeQuery();
 
             if(rs.next()){
-                return new Borrower(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"), rs.getString("password"), rs.getString("membership_type"));
+                return new Borrower(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("email"),
+                        rs.getString("password")/*,
+                        rs.getString("membership_type")*/);
             }
         } catch (SQLException e){
             System.out.println("UserRepository getBorrowerById Fel: " + e.getMessage());
@@ -57,4 +81,23 @@ public class UserRepository {
         }
     }
 
+    public void createBorrower(Borrower borrower) {
+        String sql = "INSERT INTO members (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, borrower.getFirstName());
+            stmt.setString(2, borrower.getLastName());
+            stmt.setString(3, borrower.getEmail());
+            stmt.setString(4, borrower.getPassword());
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Borrower account created successfully!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+    }
 }

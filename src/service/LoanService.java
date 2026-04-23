@@ -8,8 +8,12 @@ import java.util.ArrayList;
 public class LoanService {
     LoanRepository loanRepository = new LoanRepository();
 
-    public ArrayList<ActiveLoanDTO> getAllActiveLoans(){
-        return loanRepository.getActiveLoans();
+    public ArrayList<ActiveLoanDTO> fetchAllActiveLoans(){
+        return loanRepository.getAllActiveLoans();
+    }
+
+    public ArrayList<ActiveLoanDTO> fetchMyActiveLoans(int borrowerId){
+        return loanRepository.getMyActiveLoans(borrowerId);
     }
 
     public void startNewLoan(int bookId, int borrowerId){

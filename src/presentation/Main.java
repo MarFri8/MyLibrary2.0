@@ -1,10 +1,7 @@
 package presentation;
 
-import controller.BookController;
-import controller.BorrowerController;
-import controller.LoanController;
-import model.Book;
-import model.User;
+import controller.*;
+import model.*;
 import repository.UserRepository;
 
 import java.util.*;
@@ -21,6 +18,7 @@ public class Main {
         BookController bookController = new BookController();
         LoanController loanController = new LoanController();
         BorrowerController borrowerController = new BorrowerController();
+        LibrarianController librarianController = new LibrarianController();
         UserRepository userRepository = new UserRepository();
 
         System.out.println("Enter your email:");
@@ -41,6 +39,9 @@ public class Main {
             System.out.println("1. Book Menu");
             System.out.println("2. Open Loan Menu");
             System.out.println("3. Open Member Menu");
+            if(loggedInUser instanceof Librarian){
+                System.out.println("4. Open Librarian Menu");
+            }
             System.out.println("0. Exit");
             int select = scanner.nextInt();
             switch(select){
@@ -53,6 +54,11 @@ public class Main {
                 case 3:
                     borrowerController.showBorrowerMenu();
                     break;
+                case 4: if(loggedInUser instanceof Librarian){
+                    librarianController.showLibrarianMenu();
+                }else{
+                    System.out.println("Access Denied: Librarian Only");
+                }
                 case 0:
                     active = false;
                     break;
