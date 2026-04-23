@@ -73,6 +73,38 @@ public class BookRepository {
             System.out.println("BookRepository addBook Fel: " + e.getMessage());
         }
     }
+
+    public void deleteBook(int bookId){
+
+        String deleteDesc = "DELETE FROM book_descriptions WHERE book_id = ?";
+        String deleteAuthors = "DELETE FROM book_authors WHERE book_id = ?";
+        String deleteCats = "DELETE FROM book_categories WHERE book_id = ?";
+        String deleteBook = "DELETE FROM books WHERE id = ?";
+
+        try (Connection conn = util.DatabaseConnection.connect()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psDesc = conn.prepareStatement(deleteDesc);
+                 PreparedStatement psAuth = conn.prepareStatement(deleteAuthors);
+                 PreparedStatement psCat = conn.prepareStatement(deleteCats);
+                 PreparedStatement psBook = conn.prepareStatement(deleteBook)) {
+
+                psDesc.setInt(1, bookId); psDesc.executeUpdate();
+                psAuth.setInt(1, bookId); psAuth.executeUpdate();
+                psCat.setInt(1, bookId); psCat.executeUpdate();
+                psBook.setInt(1, bookId); psBook.executeUpdate();
+
+                conn.commit();
+                System.out.println("Book " + bookId + " and All Its Data Has Been Deleted.");
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println("BookRepository deleteBook Fel: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("BookRepository deleteBook DB Fel: " + e.getMessage());
+        }
+    }
+
     public ArrayList<Book> findAvailableBooks(){
         ArrayList<Book> books = new ArrayList<>();
         String sql = "SELECT b.*, bd.* FROM books b JOIN book_descriptions bd ON b.id=bd.book_id WHERE available_copies > 0";

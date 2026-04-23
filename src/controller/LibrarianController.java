@@ -51,6 +51,21 @@ public class LibrarianController {
         bookService.createNewBook(title, isbn, year, copies, summary, lang, pages, authId, catId);
     }
 
+    public void deleteBook(){
+        System.out.println("--- The Book Dump ---");
+        System.out.println("Enter the ID of the Book You Want to Remove: ");
+        int bookId = scanner.nextInt();
+
+        System.out.println("Are You Sure You Want to Delete Book ID " + bookId + "? (y/n): ");
+        String confirm = scanner.next();
+
+        if(confirm.equalsIgnoreCase("y")){
+            bookService.removeBook(bookId);
+        }else {
+            System.out.println("Removal Process Aborted");
+        }
+    }
+
     public void showLibrarianMenu(){
 
         boolean active = true;
@@ -60,12 +75,14 @@ public class LibrarianController {
             System.out.println("1. Create New Borrower Account");
             System.out.println("2. View All Active Loans");
             System.out.println("3. Add New Book");
+            System.out.println("4. Delete A Book");
             System.out.println("0. Exit");
             int choice = scanner.nextInt();
             switch(choice){
                 case 1 -> createBorrower();
                 case 2 -> viewAllLoans();
                 case 3 -> addNewBook();
+                case 4 -> deleteBook();
                 case 0 -> active = false;
                 default -> System.out.println("Invalid Choice");
             }

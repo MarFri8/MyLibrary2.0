@@ -15,6 +15,10 @@ public class BookService {
     AuthorRepository authorRepository = new AuthorRepository();
     CategoryRepository categoryRepository = new CategoryRepository();
 
+    public void removeBook(int bookId){
+        bookRepository.deleteBook(bookId);
+    }
+
     public void createNewBook(String title, String isbn, int year, int copies, String summary, String lang, int pages, int authorId, int catId) {
         bookRepository.addBook(title, isbn, year, copies, summary, lang, pages, authorId, catId);
     }
