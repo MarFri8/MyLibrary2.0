@@ -9,6 +9,70 @@ import java.sql.*;
 import java.util.*;
 
 public class BookRepository {
+
+    public void addBook(String title, String isbn, int year, int totalCopies, String summary, String language, int pages, int authorId, int categoryId){
+        String insertBook = "INSERT INTO books (title, isbn, year_published, total_copies, available_copies) VALUES (?, ?, ?, ?, ?)";
+        String insertDesc = """
+                            INSERT INTO book_descriptions (book_id, summary, language, page_count)
+                            SELECT ?, ?, ?, ? FROM DUAL
+                            WHERE NOT EXISTS (SELECT 1 FROM book_descriptions WHERE book_id = ?)
+                            """;
+        String insertAuthor = "INSERT INTO book_authors (book_id, author_id) VALUES (?, ?)";
+        String insertCategory = "INSERT INTO book_categories (book_id, category_id) VALUES (?, ?)";
+
+        try (Connection conn = DatabaseConnection.connect()) {
+            conn.setAutoCommit(false);
+
+            try(PreparedStatement psBook = conn.prepareStatement(insertBook, Statement.RETURN_GENERATED_KEYS)){
+                psBook.setString(1, title);
+                psBook.setString(2, isbn);
+                psBook.setInt(3, year);
+                psBook.setInt(4, totalCopies);
+                psBook.setInt(5, totalCopies);
+                psBook.executeUpdate();
+
+                ResultSet rs = psBook.getGeneratedKeys();
+                if(rs.next()){
+                    int newBookId = rs.getInt(1);
+
+                    try (PreparedStatement psDesc = conn.prepareStatement(insertDesc)) {
+                        psDesc.setInt(1, newBookId);
+                        psDesc.setString(2, summary);
+                        psDesc.setString(3, language);
+                        psDesc.setInt(4, pages);
+                        psDesc.setInt(5, newBookId);
+
+                        int rowsAffected = psDesc.executeUpdate();
+
+                        if (rowsAffected == 0){
+                            System.out.println("Description Already Existed For Book ID " + newBookId);
+                        }else{
+                            System.out.println("Description Added Successfully");
+                        }
+                    }
+
+                    try (PreparedStatement psAuth = conn.prepareStatement(insertAuthor)) {
+                        psAuth.setInt(1, newBookId);
+                        psAuth.setInt(2, authorId);
+                        psAuth.executeUpdate();
+                    }
+
+                    try (PreparedStatement psCat = conn.prepareStatement(insertCategory)) {
+                        psCat.setInt(1, newBookId);
+                        psCat.setInt(2, categoryId);
+                        psCat.executeUpdate();
+                    }
+                }
+                conn.commit();
+                System.out.println("Book and All Related Data Added Successfully");
+            }catch(SQLException e){
+                conn.rollback();
+                throw e;
+            }
+        }catch(SQLException e){
+            System.out.println("BookRepository addBook Fel: " + e.getMessage());
+        }
+    }
     public ArrayList<Book> findAvailableBooks(){
         ArrayList<Book> books = new ArrayList<>();
         String sql = "SELECT b.*, bd.* FROM books b JOIN book_descriptions bd ON b.id=bd.book_id WHERE available_copies > 0";
