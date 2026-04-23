@@ -13,6 +13,8 @@ public class BorrowerController {
 
     UserService userService = new UserService();
     LoanService loanService = new LoanService();
+    BookController bookController = new BookController();
+    LoanController loanController = new LoanController();
     Scanner scanner = new Scanner(System.in);
 
     public void showBorrowerMenu(){
@@ -22,8 +24,10 @@ public class BorrowerController {
             System.out.println("--- Member Menu ---");
             System.out.println("Welcome to the Member Menu " + Main.loggedInUser.getFirstName());
             System.out.println("1. Show Current Loans");
-            System.out.println("2. View Profile");
-            System.out.println("3. Update Profile");
+            System.out.println("2. Book Menu");
+            System.out.println("3. Open Loan Menu");
+            System.out.println("4. View Profile");
+            System.out.println("5. Update Profile");
             System.out.println("0. Back");
             int select = scanner.nextInt();
             switch(select){
@@ -39,7 +43,13 @@ public class BorrowerController {
                         }
                     }
                     break;
-                case 2: {
+                case 2:
+                    bookController.showBookMenu();
+                    break;
+                case 3:
+                    loanController.showLoanMenu();
+                    break;
+                case 4: {
                     System.out.println("--- PROFILE ---");
                     BorrowerDTO profile = userService.getBorrowerProfile(Main.loggedInUser.getId());
                     if (profile != null) {
@@ -49,7 +59,7 @@ public class BorrowerController {
                     }
                     break;
                 }
-                case 3: {
+                case 5: {
                     System.out.println("--- Update Profile ---");
                     System.out.println("1. Update First Name");
                     System.out.println("2. Update Last Name");

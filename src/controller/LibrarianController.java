@@ -136,7 +136,7 @@ public class LibrarianController {
             System.out.println("6. Edit Book");
             System.out.println("7. Assign Category To Book");
             System.out.println("8. Delete A Book");
-            System.out.println("0. Exit");
+            System.out.println("0. Back");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
