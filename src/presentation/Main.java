@@ -23,25 +23,25 @@ public class Main {
                 scanner.nextLine();
 
                 if (choice == 1) {
-                    System.out.println("Enter your email:");
+                    System.out.println("Enter Your Email:");
                     User user = userRepository.getUserByEmail(scanner.nextLine().trim());
-                    System.out.println("Enter password:");
+                    System.out.println("Enter Password:");
                     String password = scanner.nextLine().trim();
 
                     if (user != null && password.equals(user.getPassword())) {
                         loggedInUser = user;
-                        System.out.println(loggedInUser.getFirstName() + " " + loggedInUser.getLastName() + " has logged in!");
+                        System.out.println(loggedInUser.getFirstName() + " " + loggedInUser.getLastName() + " Has Logged in!");
                     } else {
-                        System.out.println("Invalid email or password.");
+                        System.out.println("Invalid Email or Password.");
                     }
                 } else if (choice == 0) {
-                    System.out.println("Exiting program...");
+                    System.out.println("Exiting Program...");
                     System.exit(0);
                 }
             } else {
                 boolean active = true;
                 while (active) {
-                    System.out.println("Welcome to the library");
+                    System.out.println("\nWelcome to the Library\n");
                     System.out.println("1. Open Member Menu");
                     if (loggedInUser instanceof Librarian) {
                         System.out.println("2. Open Librarian Menu");

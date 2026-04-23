@@ -122,6 +122,22 @@ public class LibrarianController {
         categoryService.addBookToCategory(bookId, catId);
     }
 
+    private void viewOverdueLoans() {
+        System.out.println("--- Overdue Loans ---");
+        ArrayList<ActiveLoanDTO> overdue = loanService.fetchOverdueLoans();
+
+        if (overdue.isEmpty()) {
+            System.out.println("No Overdue Loans Found.");
+        } else {
+            for (ActiveLoanDTO loan : overdue) {
+                System.out.println("LOAN ID: " + loan.getLoanId() +
+                        "\nBorrower: " + loan.getFirstName() + " " + loan.getLastName() +
+                        "\nBook: " + loan.getTitle() +
+                        "\nWas Due: " + loan.getDueDate());
+            }
+        }
+    }
+
     public void showLibrarianMenu(){
 
         boolean active = true;
@@ -129,26 +145,30 @@ public class LibrarianController {
         while(active){
             System.out.println("--- Librarian Menu ---");
             System.out.println("1. View All Active Loans");
-            System.out.println("2. Create New Borrower Account");
-            System.out.println("3. Add New Author");
-            System.out.println("4. Edit Author");
-            System.out.println("5. Add New Book");
-            System.out.println("6. Edit Book");
-            System.out.println("7. Assign Category To Book");
-            System.out.println("8. Delete A Book");
+            System.out.println("2. View Overdue Loans");
+            System.out.println("3. Create New Borrower Account");
+            System.out.println("4. Add New Author");
+            System.out.println("5. Edit Author");
+            System.out.println("6. Add New Book");
+            System.out.println("7. Edit Book");
+            System.out.println("8. Assign Category To Book");
+            System.out.println("9. Delete A Book");
+            System.out.println("10. View Popular Book Stats");
             System.out.println("0. Back");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch(choice){
                 case 1 -> viewAllLoans();
-                case 2 -> createBorrower();
-                case 3 -> addNewAuthor();
-                case 4 -> editAuthor();
-                case 5 -> addNewBook();
-                case 6 -> editBook();
-                case 7 -> assignCategoryToBook();
-                case 8 -> deleteBook();
+                case 2 -> viewOverdueLoans();
+                case 3 -> createBorrower();
+                case 4 -> addNewAuthor();
+                case 5 -> editAuthor();
+                case 6 -> addNewBook();
+                case 7 -> editBook();
+                case 8 -> assignCategoryToBook();
+                case 9 -> deleteBook();
+                case 10 -> bookService.fetchMostLoanedBooks();
                 case 0 -> active = false;
                 default -> System.out.println("Invalid Choice");
             }

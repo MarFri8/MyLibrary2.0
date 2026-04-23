@@ -8,6 +8,34 @@ import java.util.*;
 
 public class LoanRepository {
 
+    public ArrayList<ActiveLoanDTO> getOverdueLoans() {
+        ArrayList<ActiveLoanDTO> overdueLoans = new ArrayList<>();
+        String sql = "SELECT l.id, m.first_name, m.last_name, b.title, l.loan_date, l.due_date " +
+                "FROM loans l " +
+                "JOIN members m ON l.member_id = m.id " +
+                "JOIN books b ON l.book_id = b.id " +
+                "WHERE l.return_date IS NULL AND l.due_date < CURDATE()";
+
+        try (Connection conn = util.DatabaseConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                overdueLoans.add(new ActiveLoanDTO(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("title"),
+                        rs.getString("loan_date"),
+                        rs.getString("due_date")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("LoanRepository getOverdueLoans Fel: " + e.getMessage());
+        }
+        return overdueLoans;
+    }
+
     public ArrayList<ActiveLoanDTO> getAllActiveLoans() {
         String sql = """
                 SELECT l.id AS l_id, b.id AS b_id, b.title, l.due_date, m.id AS m_id FROM loans l
@@ -48,6 +76,24 @@ public class LoanRepository {
             System.out.println("LoanRepository executeActiveLoanQuery Fel: " + e.getMessage());
         }
         return list;
+    }
+
+    public int loansOverdue(int borrowerId){
+        String sql = "SELECT COUNT(*) FROM loans WHERE member_id = ? AND return_date IS NULL AND due_date < CURDATE()";
+
+        try(Connection conn = DatabaseConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1, borrowerId);
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    return rs.getInt(1);
+                }
+            }
+        }catch (SQLException e){
+            System.out.println("LoanRepository loanOverdue Fel: " + e.getMessage());
+        }
+        return 0;
     }
 
     public void createLoan(int bookId, int borrowerId){

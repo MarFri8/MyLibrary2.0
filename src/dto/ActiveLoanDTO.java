@@ -6,7 +6,10 @@ public class ActiveLoanDTO {
     private int bookId;
     private String title;
     private String dueDate;
+    private String loanDate;
     private int userId;
+    private String firstName;
+    private String lastName;
 
     public ActiveLoanDTO(){
     }
@@ -24,12 +27,13 @@ public class ActiveLoanDTO {
         return borrowerDTO;
     }*/
 
-    public ActiveLoanDTO(int loanId, int bookId, String title, String dueDate, int userId){
+    public ActiveLoanDTO(int loanId, String firstName, String lastName, String title, String loanDate, String dueDate){
         this.loanId = loanId;
-        this.bookId = bookId;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.title = title;
+        this.loanDate = loanDate;
         this.dueDate = dueDate;
-        this.userId = userId;
     }
 
     public int getLoanId() {
@@ -61,6 +65,18 @@ public class ActiveLoanDTO {
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
+
+    public String getLoanDate() { return loanDate; }
+
+    public void setLoanDate(String loanDate) { this.loanDate = loanDate; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     @Override
     public String toString() {

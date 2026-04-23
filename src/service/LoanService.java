@@ -16,6 +16,10 @@ public class LoanService {
         return loanRepository.getMyActiveLoans(borrowerId);
     }
 
+    public ArrayList<ActiveLoanDTO> fetchOverdueLoans() {
+        return loanRepository.getOverdueLoans();
+    }
+
     public void startNewLoan(int bookId, int borrowerId){
         loanRepository.createLoan(bookId, borrowerId);
     }
@@ -26,5 +30,12 @@ public class LoanService {
 
     public void extendLoanDate(int loanId){
         loanRepository.extendLoan((loanId));
+    }
+
+    public void checkUserNotifications(int borrowerId){
+        int overdueCount = loanRepository.loansOverdue(borrowerId);
+        if(overdueCount > 0){
+            System.out.println("\n*** NOTIFICATION: You Have " + overdueCount + " book(s) past their due date\nReturn Them to Avoid Fines ***");
+        }
     }
 }

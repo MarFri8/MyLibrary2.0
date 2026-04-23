@@ -10,6 +10,28 @@ import java.util.*;
 
 public class BookRepository {
 
+    public LinkedHashMap<String, Integer> getMostLoanedBooks(){
+        LinkedHashMap<String, Integer> stats = new LinkedHashMap<>();
+        String sql = """
+                     SELECT b.title, COUNT(l.book_id) AS loan_count FROM books b
+                     JOIN loans l ON b.id=l.book_id
+                     GROUP BY b.id
+                     ORDER BY loan_count DESC
+                     LIMIT 5
+                     """;
+        try(Connection conn = util.DatabaseConnection.connect();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery()){
+
+            while(rs.next()){
+                stats.put(rs.getString("title"), rs.getInt("loan_count"));
+            }
+        }catch(SQLException e){
+            System.out.println("BookRepository getMostLoanedBooks Fel: " + e.getMessage());
+        }
+        return stats;
+    }
+
     public void addBook(String title, String isbn, int year, int totalCopies, String summary, String language, int pages, int authorId, int categoryId){
         String insertBook = "INSERT INTO books (title, isbn, year_published, total_copies, available_copies) VALUES (?, ?, ?, ?, ?)";
         String insertDesc = """

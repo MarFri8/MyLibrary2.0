@@ -3,6 +3,7 @@ package controller;
 import dto.ActiveLoanDTO;
 import dto.BorrowerDTO;
 import presentation.Main;
+import service.BookService;
 import service.LoanService;
 import service.UserService;
 
@@ -15,9 +16,12 @@ public class BorrowerController {
     LoanService loanService = new LoanService();
     BookController bookController = new BookController();
     LoanController loanController = new LoanController();
+    BookService bookService = new BookService();
     Scanner scanner = new Scanner(System.in);
 
     public void showBorrowerMenu(){
+
+        loanService.checkUserNotifications(Main.loggedInUser.getId());
 
         boolean active = true;
         while(active){
@@ -28,6 +32,7 @@ public class BorrowerController {
             System.out.println("3. Open Loan Menu");
             System.out.println("4. View Profile");
             System.out.println("5. Update Profile");
+            System.out.println("6. View Popular Books");
             System.out.println("0. Back");
             int select = scanner.nextInt();
             switch(select){
@@ -49,7 +54,7 @@ public class BorrowerController {
                 case 3:
                     loanController.showLoanMenu();
                     break;
-                case 4: {
+                case 4:
                     System.out.println("--- PROFILE ---");
                     BorrowerDTO profile = userService.getBorrowerProfile(Main.loggedInUser.getId());
                     if (profile != null) {
@@ -58,8 +63,8 @@ public class BorrowerController {
                         System.out.println("Profile Not Found");
                     }
                     break;
-                }
-                case 5: {
+
+                case 5:
                     System.out.println("--- Update Profile ---");
                     System.out.println("1. Update First Name");
                     System.out.println("2. Update Last Name");
@@ -82,7 +87,8 @@ public class BorrowerController {
                         System.out.println("Update Failed. Please Check Your Input");
                     }
                     break;
-                }
+                case 6:
+                    bookService.fetchMostLoanedBooks();
                 case 0:
                     active = false;
                     break;
